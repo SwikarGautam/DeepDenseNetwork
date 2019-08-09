@@ -141,14 +141,14 @@ class DeepDenseNet:
 
             self.vg = [beta1 * v + (1 - beta1) * g for g, v in zip(dg, self.vg)]
             self.sg = [beta2 * s + (1 - beta2) * np.square(g) for g, s in zip(dg, self.sg)]
-            self.gamma = [g - learning_rate*v/np.sqrt(s+epsilon) for g, v, s in zip(self.gamma, self.vb, self.sb)]
+            self.gamma = [g - learning_rate*v/np.sqrt(s+epsilon) for g, v, s in zip(self.gamma, self.vg, self.sg)]
 
         self.weights = [w - learning_rate*v/np.sqrt(s+epsilon) for w, v, s in zip(self.weights, self.vw, self.sw)]
         self.biases = [b - learning_rate*v/np.sqrt(s+epsilon) for b, v, s in zip(self.biases, self.vb, self.sb)]
 
     # backpropagation through batch normalization layer
     def batch_norm_backward(self, dout, x_hat, variance, index):
-        N, _ = dout.shape
+        N = dout.shape[0]
         d_gamma = np.sum(dout * x_hat, axis=0, keepdims=True)
         d_beta = np.sum(dout, axis=0, keepdims=True)
         dxhat = dout * self.gamma[-index]
@@ -169,5 +169,5 @@ class DeepDenseNet:
 
     @staticmethod
     def softmax(x):
-        e = np.exp(x)
+        e = np.exp(x - x.max(axis=1, keepdims=True))  # subtracting the max makes it more stable
         return e/np.sum(e, axis=1, keepdims=True)
