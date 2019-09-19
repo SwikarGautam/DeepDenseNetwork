@@ -1,2 +1,2 @@
 # DeepDenseNetwork
-Dense neural network with Adam optimizer, L2 regularization, Batch normalization, and Dropout using only numpy 
+Fully connected neural network with Adam optimizer, L2 regularization, Batch normalization, and Dropout implemented using numpy only. 
